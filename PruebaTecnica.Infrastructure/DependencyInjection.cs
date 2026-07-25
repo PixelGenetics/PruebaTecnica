@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PruebaTecnica.Application.Common.Interfaces;
 using PruebaTecnica.Infrastructure.Persistence;
 
 namespace PruebaTecnica.Infrastructure;
@@ -14,6 +15,9 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<IAppDbContext>(provider =>
+            provider.GetRequiredService<AppDbContext>());
 
         return services;
     }
