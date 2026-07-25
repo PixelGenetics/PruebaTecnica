@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PruebaTecnica.Application.Common.Interfaces;
 using PruebaTecnica.Infrastructure.Persistence;
+using PruebaTecnica.Infrastructure.Authentication;
 
 namespace PruebaTecnica.Infrastructure;
 
@@ -19,6 +20,8 @@ public static class DependencyInjection
         services.AddScoped<IAppDbContext>(provider =>
             provider.GetRequiredService<AppDbContext>());
 
+        services.AddScoped<IPasswordService, PasswordService>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         return services;
     }
 }

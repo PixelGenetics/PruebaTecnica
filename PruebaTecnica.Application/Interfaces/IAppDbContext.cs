@@ -12,6 +12,7 @@ public interface IAppDbContext
     DbSet<Product> Product { get; }
 
     DbSet<MovInv> MovInv { get; }
+    DbSet<Usuario> Usuario { get; }
     Task<IDbContextTransaction> BeginTransactionAsync(
     IsolationLevel isolationLevel,
     CancellationToken cancellationToken = default);
