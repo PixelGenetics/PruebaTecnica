@@ -5,9 +5,11 @@ using PruebaTecnica.Application.Features.Inventory.DTOs;
 using PruebaTecnica.Application.Features.Inventory.Queries.GetProductInventory;
 using PruebaTecnica.Application.Features.Inventory.Queries.GetProductKardex;
 using PruebaTecnica.Application.Features.Inventory.Queries.GetStockReport;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PruebaTecnica.Api.Controllers;
 
+[Authorize]
 [Route("api/inventory")]
 [ApiController]
 public class InventoryController : ControllerBase

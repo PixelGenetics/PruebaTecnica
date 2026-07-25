@@ -8,9 +8,11 @@ using PruebaTecnica.Application.Features.Products.Queries.GetAllProducts;
 using PruebaTecnica.Application.Features.Products.Queries.GetProductById;
 using PruebaTecnica.Application.Features.Products.Commands.DeleteProduct;
 using PruebaTecnica.Application.Features.Products.Commands.ChangeProductStatus;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PruebaTecnica.Api.Controllers;
 
+[Authorize]
 [Route("api/products")]
 [ApiController]
 public class ProductController : ControllerBase

@@ -6,9 +6,11 @@ using PruebaTecnica.Application.Features.Categories.Queries.GetCategoryById;
 using PruebaTecnica.Application.Features.Categories.DTOs;
 using PruebaTecnica.Application.Features.Categories.Commands.UpdateCategory;
 using PruebaTecnica.Application.Features.Categories.Commands.DeleteCategory;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PruebaTecnica.Api.Controllers;
 
+[Authorize]
 [Route("api/categories")]
 [ApiController]
 public class CategoryController : ControllerBase
