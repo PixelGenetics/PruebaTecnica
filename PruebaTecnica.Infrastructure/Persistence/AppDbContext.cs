@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PruebaTecnica.Application.Common.Interfaces;
 using PruebaTecnica.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.Data;
 
 namespace PruebaTecnica.Infrastructure.Persistence;
 
@@ -14,13 +14,13 @@ public class AppDbContext : DbContext, IAppDbContext
     }
 
     public DbSet<Category> Category { get; set; } = null!;
-
     public DbSet<Product> Product { get; set; } = null!;
-
     public DbSet<MovInv> MovInv { get; set; } = null!;
+    public DbSet<Usuario> Usuario { get; set; } = null!;
+
     public Task<IDbContextTransaction> BeginTransactionAsync(
-    IsolationLevel isolationLevel,
-    CancellationToken cancellationToken = default)
+        IsolationLevel isolationLevel,
+        CancellationToken cancellationToken = default)
     {
         return Database.BeginTransactionAsync(
             isolationLevel,
@@ -36,6 +36,44 @@ public class AppDbContext : DbContext, IAppDbContext
 
         modelBuilder.Entity<Product>()
             .ToTable("Product");
+
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.ToTable("User");
+
+            entity.HasKey(usuario => usuario.Id);
+
+            entity.Property(usuario => usuario.NombreUsuario)
+                .HasColumnName("nombreUsuario")
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.HasIndex(usuario => usuario.NombreUsuario)
+                .IsUnique();
+
+            entity.Property(usuario => usuario.Contrasenia)
+                .HasColumnName("contrasenia")
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(usuario => usuario.Nombre)
+                .HasColumnName("nombre")
+                .HasMaxLength(150)
+                .IsRequired();
+
+            entity.Property(usuario => usuario.Correo)
+                .HasColumnName("correo")
+                .HasMaxLength(150)
+                .IsRequired();
+
+            entity.HasIndex(usuario => usuario.Correo)
+                .IsUnique();
+
+            entity.Property(usuario => usuario.Estado)
+                .HasColumnName("estado")
+                .HasDefaultValue(true)
+                .IsRequired();
+        });
 
         modelBuilder.Entity<MovInv>(entity =>
         {
