@@ -17,4 +17,8 @@
     <ProjectReference Include="..\PruebaTecnica.Infrastructure\PruebaTecnica.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="BD\" />
+  </ItemGroup>
+
 </Project>
