@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PruebaTecnica.Application.Common.Interfaces;
 using PruebaTecnica.Domain.Entities;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace PruebaTecnica.Infrastructure.Persistence;
 
@@ -16,6 +18,14 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Product> Product { get; set; } = null!;
 
     public DbSet<MovInv> MovInv { get; set; } = null!;
+    public Task<IDbContextTransaction> BeginTransactionAsync(
+    IsolationLevel isolationLevel,
+    CancellationToken cancellationToken = default)
+    {
+        return Database.BeginTransactionAsync(
+            isolationLevel,
+            cancellationToken);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
