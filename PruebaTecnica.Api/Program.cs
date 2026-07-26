@@ -1,9 +1,10 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PruebaTecnica.Application;
 using PruebaTecnica.Infrastructure;
+using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +67,11 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddSwaggerGen(options =>
 {
+    var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
+
+    options.IncludeXmlComments(xmlFilePath);
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
