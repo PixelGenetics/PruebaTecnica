@@ -1,11 +1,11 @@
-using PruebaTecnica.Infrastructure;
-using PruebaTecnica.Application;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PruebaTecnica.Application;
+using PruebaTecnica.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException(
@@ -19,9 +19,50 @@ var jwtAudience = builder.Configuration["Jwt:Audience"]
     ?? throw new InvalidOperationException(
         "No se encontró la configuración Jwt:Audience.");
 
+var signingKey = new SymmetricSecurityKey(
+    Encoding.UTF8.GetBytes(jwtKey));
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+
+        options.DefaultChallengeScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+
+        options.DefaultScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwtIssuer,
+
+                ValidateAudience = true,
+                ValidAudience = jwtAudience,
+
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey
+            };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -51,36 +92,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication();
-builder.Services.AddControllers();
-
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtKey)),
-
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
-builder.Services.AddAuthorization();
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -90,8 +103,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseAuthorization();
 
 app.MapControllers();
